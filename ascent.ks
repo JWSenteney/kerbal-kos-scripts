@@ -1,11 +1,11 @@
 clearscreen.
-print "Launch guidance enabled.  Hands off the stick!".
-print "Pilot must control staging and throttle manually.".
+print "Ascent guidance enabled.  Hands off the stick!".
+print "Staging is not handled by this program.".
 
 // Heading will stay locked to startAngle until apoapsis reaches this point.
 parameter turnStartAltitude is 500.
 // How fast the autopilot will pitch the craft down. Higher numbers mean you will go horizontal faster.
-parameter turnSpeedMultiplier is 2.
+parameter turnSpeedMultiplier is 1.2.
 // Program will terminate when apoapsis reaches this point.
 parameter targetAltitude is 80000.
 // Angle of the craft at inial burn.  90 is vertical.  Change if you're using clamps to start at an angle.
@@ -14,7 +14,7 @@ parameter startAngle is 90.
 // If set to false, the program will only terminate when apoapsis reaches target altitude.
 parameter endOnStage is false.
 // Allows you to set the ascent profile to a parabolic curve.  1 is for a linear function.
-parameter profileCurve is 1.
+parameter profileCurve is 0.75.
 // Ascent angle cannot be set higher than this number.
 parameter maxAngle is 90.
 // Ascent angle cannot be set lower than this number.
@@ -29,7 +29,10 @@ set SAS to false.
 set headingCalc to heading(startRoll,startAngle).
 lock steering to headingCalc.
 
+// play around with the parameters here: https://www.desmos.com/calculator/cofygusacw 
 lock ascentAngle to startAngle - (startAngle * turnSpeedMultiplier) * (ship:apoapsis - turnStartAltitude)^profileCurve / ((targetAltitude - turnStartAltitude)^profileCurve).
+
+lock throttle to 1.0.
 
 print "Ascent angle is: " + round(startAngle,2).
 until ship:apoapsis >= targetAltitude {
